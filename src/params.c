@@ -2,12 +2,12 @@
 #include "matrix.h"
 
 void Welcome(int help){
-        printf("\t\t/********************************\\\n");
-        printf("\t\t|*** Stepping-Stone-Simulator ***|\n");
-        printf("\t\t\\********************************/\n\n");
+        printf("\t\t/************************\\\n");
+        printf("\t\t|*** PCAdapt software ***|\n");
+        printf("\t\t\\************************/\n\n");
         printf("\n\n");
 
-        if (help) printf("Command line Help:\n\t-n nd1 nd2 Nei \n\t-m m1 m2 minf \n\t-l number of loci\n\t-o output files basis name\n\t -d number of demes to ignore on each edge\n\t-s 1 Draw a random sample for each deme\n\t-p Calculate a pairwise Directionality index Psi\n\t-t number of time sampling followed by the time in generations of each sample\n\t-E 0 if no admixture, time of expansion beginning, time of expansion end, pop where expansion started, pop where expansion ended\n\n");
+        if (help) printf("Command line Help:\n\t-i path and name of the file containing your genotypes.\n\t-K number of factors to use\n\t-b number of burnin iterations\n\t-s number of iteration (including burnin)\n\t-o name of the output file\n\t-t 1 if you have individuals in lines\n\t-B Ising model parameter\n\t-I name of data file to initialise the chain with SVD\n\t-S 0 if you want the data to be unscaled.\n");
 }
 
 
@@ -67,8 +67,10 @@ int handleParams(int argc, char* argv[], int *npop, int *n1, int *n2, int *disca
 					*timeStart = atoi(argv[i + 4]);
                                         *timeEnd = atoi(argv[i + 5]);
 					*ke = atoi(argv[i + 6]);
-					*nSteps = (*popEnd)%(*n1) - (*popStart)%(*n1);
+					*nSteps = (*popEnd) - (*popStart);
+printf("nsteps %i\n", *nSteps);
 					*lengthSteps = (int) (*timeEnd - *timeStart)/(*nSteps);
+					if (*nSteps == ((int) (*timeEnd - *timeStart) + 1)) *lengthSteps = 1;
 					if ((*lengthSteps > 0) && (*ke < *Ne) && (*nSteps > 0)){ *rangeExpansion = 1; printf("Range Expansion between population %i and %i\n\t-Starting at time %i\n\t-Ending at time %i\n\t-Founder effect %i/%i\n\t-%i steps of length %i\n", *popStart, *popEnd, *timeStart, *timeEnd, *ke, *Ne, *nSteps, *lengthSteps);}
 				break;
 			}

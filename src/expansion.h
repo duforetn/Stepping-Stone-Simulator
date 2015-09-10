@@ -14,3 +14,5 @@ void expand2D(double *Pops, double *OutsidePop, double *AF, int n1, int n2, int 
 
 void expandNewpop1D(double *Pops, double *AF, int pop, int nSNP, int Ne, int ke, int admixture);
 
+void expandNewpop2D(double *Pops, double *AF, int pop, int nSNP, int n1, int n2, int Ne, int ke, int admixture);
+

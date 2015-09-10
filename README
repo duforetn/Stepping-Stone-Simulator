@@ -17,4 +17,4 @@ Welcome Stepping-stone-simulator
 version 08/23/14:
 Ongoing project. Simulation of stepping stone in 1 and 2 dimensions are tested.
 Expansion in 1 dimension is tested
-Expansion in 2 dimensions is not implemented yet
+Expansion in 2 dimensions implemented: The expansion occurs linearly along the second dimension, row by row.

@@ -16,27 +16,19 @@ void initExpansion1D(double *Pops, int nSNP, int npop, int popStart, int popEnd)
 
 }
 
+/* Initialize all the demes with 0 allele frequencies for coordinates between popstart and popends */
 void initExpansion2D(double *Pops, int nSNP, int n1, int n2, int popStart, int popEnd){
 
         int p1, p2, l;
 	int s1 = popStart%n1, s2 = (int) popStart/n1;
 	int e1 = popEnd%n1, e2 = (int) popEnd/n1;
-	for (p2=s2; p2<e2 + 1; p2++){
-	        for (p1=s1; p1<e1 + 1; p1++){
+	for (p1=0; p1<n1; p1++){
+	        for (p2=popStart; p2<popEnd;  p2++){
 	                for (l=0; l<nSNP; l++){
         	                Pops[(p1 + n1*p2)*nSNP + l] = .0;
                 	}
 		}
         }
-/*for (p2=0; p2<n2; p2++){
-	for (p1=0; p1<n1; p1++){
-		for (l=0; l<nSNP; l++){
-			printf("%g ", Pops[(p1 + n1*p2)*nSNP + l]);
-		}
-		printf("\n");
-	}
-}
-*/
 }
 
 
@@ -65,23 +57,39 @@ void expand1D(double *Pops, double *OutsidePop, double *AF, int npop, int nSNP, 
 
 }
 
+/* Perform the IBD and expansion during the range expansion time */
 void expand2D(double *Pops, double *OutsidePop, double *AF, int n1, int n2, int nSNP, double m1, double m2, double minf, int Ne, int Loss, int gen, int timeStart, int timeEnd, int popStart, int popEnd, int nSteps, int lengthSteps, int ke, int admixture){
 
-/*        int npopColonized = (int) (gen - timeStart - 1)/lengthSteps + 1;
-        int p, l;
-        int s1 = popStart%n1, s2 = (int) popStart/n1;
-        int e1 = popEnd%n1, e2 = (int) popEnd/n1;
-p
+        int npopColonized = (int) (gen - timeStart - 1)/lengthSteps + 1;
+        int p1, p2, l;
         if ((gen == timeStart) && (!admixture)) initExpansion2D(Pops, nSNP, n1, n2, popStart, popEnd);
-*/	
+        if (gen>timeStart){
+		for (p1=0; p1<n1; p1++){
+                for (p2=popStart - 1; p2<popStart - 1 + npopColonized; p2++){
+                        for (l=0; l<nSNP; l++){
+                                double af = Pops[(p1 + p2*n1)*nSNP + l];
+                                if ((af > 0) && (af < 1)) af = (double) rand_normal(af, af*(1 - af)/(2*Ne));
+                                if (af > 1) af = 1;
+                                if (af < 0) af = 0;
+                                Pops[(p1 + p2*n1)*nSNP + l] = af;
+                        }
+                }
+                if (((gen - timeStart)%lengthSteps == 0) && (npopColonized < (popEnd - popStart + 1))) expandNewpop2D(Pops, AF, popStart + npopColonized - 1, nSNP, n1, n2, Ne, ke, admixture);
+		}
+        }
+
+        /* Treat the populations outside the expansion */
+        if (popStart > 1) evolve2D(Pops, OutsidePop, AF, (popStart - 1)*n1, n1, popStart - 1, nSNP, m1, m2, minf, Ne, Loss);
+        if (popEnd < n2) evolve2D(Pops + nSNP*n1*popEnd, OutsidePop, AF, n1*(n2 - popEnd), n1, n2 - popEnd, nSNP, m1, m2, minf, Ne, Loss);
+
+
 }
 
 /* pop -1 is the last colonized deme, the new deme is pop*/
 void expandNewpop1D(double *Pops, double *AF, int pop, int nSNP, int Ne, int ke, int admixture){
 
 	int l, i, count;
-
-	printf("Expand new pop: %i\n", pop + 1);
+printf("Expand new pop: %i\n", pop + 1);
 	for (l=0; l<nSNP; l++){
 		count = 0;
 		for (i=0; i<ke; i++) if (drand() < Pops[nSNP*(pop - 1) + l]) count++;
@@ -93,3 +101,23 @@ void expandNewpop1D(double *Pops, double *AF, int pop, int nSNP, int Ne, int ke,
 	}
 
 }
+
+/* pop is the coordinate on the second dimension of the newly colonized pop.*/
+void expandNewpop2D(double *Pops, double *AF, int pop, int nSNP, int n1, int n2, int Ne, int ke, int admixture){
+
+        int p1, l, i, count;
+printf("Expand new pops in row: %i\n", pop + 1);
+	for (p1=0; p1<n1; p1++){
+        for (l=0; l<nSNP; l++){
+                count = 0;
+                for (i=0; i<ke; i++) if (drand() < Pops[nSNP*((pop - 1)*n1 + p1) + l]) count++;
+                if (admixture){
+                        for (i=ke; i<Ne; i++) if (drand() < Pops[nSNP*(pop*n1 + p1) + l]) count ++;
+                }
+                Pops[nSNP*(pop*n1 + p1) + l] = (double) count/ke;
+                if (admixture) Pops[nSNP*(pop*n1 + p1) + l] = (double) count/Ne;
+        }
+	}
+
+}
+
