@@ -34,6 +34,7 @@ int sampleData(double *Data, int *sampledData, double *Pops, int npop, int n1, i
 	contiguously writing all populations for one time sample.
 	*/
 	if (n2 == 1){
+		npopSampledGeneration = (n1 - 2*discardEdge);
 		for (p=discardEdge; p<npop - discardEdge; p++){
 			for (l=0; l<nSNP; l++){
 				Data[(p - discardEdge)*nSNP + l + sample*(npop - 2*discardEdge)*nSNP] = Pops[p*nSNP + l];
@@ -70,6 +71,7 @@ void writeData(double *Data, int *sampledData, int npop, int n1, int n2, int dis
         char *dataName = calloc(256, sizeof(char));
 	char *sampleName = calloc(256, sizeof(char));
 	int npopSampled = nSamples*(n1 - 2*discardEdge)*(n2 - 2*discardEdge);
+	if (n2 == 1) npopSampled = nSamples*(n1 - 2*discardEdge);
 
         strcpy(dataName, outputName);
         strcat(dataName, ".dat");

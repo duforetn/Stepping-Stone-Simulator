@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
 	int i, j, burnin = 10, gen, ngen, nSamples = 1, nextSample, sample = 0, downSample = 0, calculatePsi = 0;
 	int *Times, *coords, *sampledData;
 	int rangeExpansion = 0, timeStart, admixture = 0, timeEnd, popStart, popEnd, nSteps, lengthSteps, ke;
-	double *OutsidePop;
+	double *OutsidePop, *Propagule;
 	char *outputName = malloc(sizeof(char)*128);
 	double *Pops, *AF, *Data, *Cor, *Psi;
 
@@ -26,7 +26,9 @@ int main(int argc, char* argv[]){
 	if(handleParams(argc, argv, &npop, &n1, &n2, &discardEdge, &burnin, &nSNP, &m1, &m2, &minf, &Ne, &nSamples, &ngen, &downSample, &calculatePsi, &Loss, &nextSample, &Times, &rangeExpansion, &timeStart, &timeEnd, &popStart, &popEnd, &nSteps, &lengthSteps, &admixture, &ke, &outputName)) return 0;
 	npopSampled = nSamples*(n1 - 2*discardEdge)*(n2 - 2*discardEdge);
 	if (n2 == 1){
+		npopSampled = nSamples*(n1 - 2*discardEdge);
 		Data = malloc(sizeof(double)*npopSampled*nSNP);
+		Propagule = malloc(sizeof(double)*nSNP);
 		if (downSample) sampledData = malloc(sizeof(int)*npopSampled*nSNP);
 	} else {
 		Data = malloc(sizeof(double)*npopSampled*nSNP);
@@ -41,7 +43,7 @@ int main(int argc, char* argv[]){
 
         for (gen=1 - burnin; gen<ngen + 1; gen++){
 		if (rangeExpansion && (gen > timeStart - 1) && (gen < timeEnd + 1)){
-			if (n2 == 1) expand1D(Pops, OutsidePop, AF, npop, nSNP, m1, minf, Ne, Loss, gen, timeStart, timeEnd, popStart, popEnd, nSteps, lengthSteps, ke, admixture);
+			if (n2 == 1) expand1D(Pops, OutsidePop, Propagule, AF, npop, nSNP, m1, minf, Ne, Loss, gen, timeStart, timeEnd, popStart, popEnd, nSteps, lengthSteps, ke, admixture);
 			if (n2 > 1) expand2D(Pops, OutsidePop, AF, n1, n2, nSNP, m1, m2, minf, Ne, Loss, gen, timeStart, timeEnd, popStart, popEnd, nSteps, lengthSteps, ke, admixture);
 		} else {
 			if (n2 == 1) evolve1D(Pops, OutsidePop, AF, npop, nSNP, m1, minf, Ne, Loss);
@@ -67,6 +69,7 @@ int main(int argc, char* argv[]){
 	if (calculatePsi) free(Psi);
 	free(OutsidePop);
 	free(Data);
+	free(Propagule);
 	return 0;
 
 }
