@@ -2,12 +2,12 @@
 #include "matrix.h"
 
 void Welcome(int help){
-        printf("\t\t/************************\\\n");
-        printf("\t\t|*** PCAdapt software ***|\n");
-        printf("\t\t\\************************/\n\n");
+        printf("\t\t/******************************\\\n");
+        printf("\t\t|*** Forward-Stepping-stone ***|\n");
+        printf("\t\t\\******************************/\n\n");
         printf("\n\n");
 
-        if (help) printf("Command line Help:\n\t-i path and name of the file containing your genotypes.\n\t-K number of factors to use\n\t-b number of burnin iterations\n\t-s number of iteration (including burnin)\n\t-o name of the output file\n\t-t 1 if you have individuals in lines\n\t-B Ising model parameter\n\t-I name of data file to initialise the chain with SVD\n\t-S 0 if you want the data to be unscaled.\n");
+        if (help) printf("Command line Help:\n\t-o output files\n\t-m m1 m2 minf -n npop1 npop2 Ne\n\t-l number of loci\n\t-d number of demes to discard on each side\n\t-t nTimeSamples t1 ... tn\n\t-E 1/0 (admixture or not) popStart popEnd timeStart timeEnd ke\n");
 }
 
 
