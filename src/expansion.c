@@ -20,8 +20,6 @@ void initExpansion1D(double *Pops, int nSNP, int npop, int popStart, int popEnd)
 void initExpansion2D(double *Pops, int nSNP, int n1, int n2, int popStart, int popEnd){
 
         int p1, p2, l;
-	int s1 = popStart%n1, s2 = (int) popStart/n1;
-	int e1 = popEnd%n1, e2 = (int) popEnd/n1;
 	for (p1=0; p1<n1; p1++){
 	        for (p2=popStart; p2<popEnd;  p2++){
 	                for (l=0; l<nSNP; l++){

@@ -71,6 +71,10 @@ int handleParams(int argc, char* argv[], int *npop, int *n1, int *n2, int *disca
 printf("nsteps %i\n", *nSteps);
 					*lengthSteps = (int) (*timeEnd - *timeStart)/(*nSteps);
 					if (*nSteps == ((int) (*timeEnd - *timeStart) + 1)) *lengthSteps = 1;
+					if (*popStart < 1) {*popStart = 1; printf("**WARNING** expansion starts from population 1\n");}
+
+					if (*n2 == 1 && *popStart > *n1){*popEnd = *n1; printf("**WARNING** expansion ends from population %i\n", *n1);}
+					if (*n2 > 1 && *popStart > *n2){*popEnd = *n2; printf("**WARNING** expansion ends at population %i\n", *n2);}
 					if ((*lengthSteps > 0) && (*ke < *Ne) && (*nSteps > 0)){ *rangeExpansion = 1; printf("Range Expansion between population %i and %i\n\t-Starting at time %i\n\t-Ending at time %i\n\t-Founder effect %i/%i\n\t-%i steps of length %i\n", *popStart, *popEnd, *timeStart, *timeEnd, *ke, *Ne, *nSteps, *lengthSteps);}
 				break;
 			}
