@@ -206,10 +206,10 @@ void getCor(double **Cor, double *Data, double *OutsidePop, int npop, int n1, in
 	}
 
 	for (s=0; s<nSamples; s++) {
-		colMeans(Data + (nrow/nSamples)*s*nSNP, nrow/nSamples, nSNP, Means);
+//		colMeans(Data + (nrow/nSamples)*s*nSNP, nrow/nSamples, nSNP, Means);
 		for (i=0; i<nrow/nSamples; i++){
 			for (j=0; j<nSNP; j++){
-				Data[i*nSNP + j] -= (Means[j] - OutsidePop[j]);
+//				Data[i*nSNP + j] -= (Means[j] - OutsidePop[j]);
 				Data[s*nSNP*(nrow/nSamples) + i*nSNP + j] -= OutsidePop[j];
 			}
 		}
